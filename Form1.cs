@@ -66,7 +66,13 @@ namespace IS17ZakalinaKPR
                     }
                     else
                     {
-                        MessageBox.Show("Error");
+                        if(output=="director")
+                        {
+                            Form9 f9 = new Form9();
+                            f9.Show();
+                        }
+                        else
+                            MessageBox.Show("Error");
                     }
                 }
             }

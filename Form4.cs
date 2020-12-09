@@ -8,6 +8,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using System.Windows.Forms;
+using Word = Microsoft.Office.Interop.Word;
 
 namespace IS17ZakalinaKPR
 {
@@ -15,6 +16,7 @@ namespace IS17ZakalinaKPR
     {
         string connectionstring = @"Data Source=DESKTOP-HHT7APO;Integrated Security=SSPI;Initial Catalog=Mebelniy_magazin";
         public string login_manager = "";
+		int sum = 0;
         public Form4(Form2 f2)
         {
             login_manager = f2.login;
@@ -40,7 +42,6 @@ namespace IS17ZakalinaKPR
                 else
                 {
                     kolvo-=Convert.ToInt32(textBox2.Text);
-                    MessageBox.Show(kolvo.ToString());
                     string query1 = "UPDATE Tovar SET kolvo ="+kolvo+" WHERE id_tovar="+Convert.ToInt32(comboBox1.SelectedValue);
                     SqlCommand command1 = new SqlCommand(query1, conn);
                     command1.ExecuteNonQuery();
@@ -56,15 +57,34 @@ namespace IS17ZakalinaKPR
                     SqlCommand command3 = new SqlCommand(query3, conn);
                     SqlDataReader reader2 = command3.ExecuteReader();
                     reader2.Read();
-                    int sum = Convert.ToInt32(reader2[0]);
+                    sum = Convert.ToInt32(reader2[0]);
                     reader2.Close();
                     string query4 = "INSERT INTO Realizatsiya (id_realizatsiya, id_tovar, kolvo, login, sum) VALUES ("+count+","+comboBox1.SelectedValue+","+Convert.ToInt32(textBox2.Text)+",'"+login_manager+"',"+(Convert.ToInt32(textBox2.Text)*sum)+")";
                     SqlCommand command4 = new SqlCommand(query4, conn);
                     command4.ExecuteNonQuery();
                     MessageBox.Show("Информация о реализации сохранена!");
+                    //MessageBox.Show("Квитанция сохранена");// вывод сообщения о сохранении
+                    //var WordApp = new Word.Application();
+                    //WordApp.Visible = false;
+                    ////путь к шаблону
+                    //var Worddoc = WordApp.Documents.Open(Application.StartupPath + @"\Бланк-квитанция.docx");
+                    ////заполнение
+                    //int sum2 = sum * Convert.ToInt32(textBox2.Text);
+                    //string tovar = Convert.ToString(comboBox1.SelectedValue);
+                    //int kol = Convert.ToInt32(textBox2.Text);
+                    //Chek("{sum}", sum2.ToString(), Worddoc);
+                    //Chek("{tov}", tovar.ToString(), Worddoc);
+                    //Chek("{kol}", kol.ToString(), Worddoc);
+                    //Chek("{data}", DateTime.Now.ToLongDateString(), Worddoc);
+
+                    ////сохранение документа
+                    //Worddoc.SaveAs2(Application.StartupPath + $"\\Квитанция на сумму {sum} от {DateTime.Now.ToLongDateString()}" + ".docx");
+                    ////открываем документ
+                    //WordApp.Visible = true;
                 }
                 conn.Close();
                 load(connectionstring, dataGridView1);
+                
             }
             else
             {
@@ -87,6 +107,13 @@ namespace IS17ZakalinaKPR
             // TODO: данная строка кода позволяет загрузить данные в таблицу "dataSet1.Tovar". При необходимости она может быть перемещена или удалена.
             this.tovarTableAdapter.Fill(this.dataSet1.Tovar);
             load(connectionstring, dataGridView1);
+        }
+		//функция для Word
+        private void Chek(string subToReplace, string text, Word.Document worddoc)
+        {
+            var range = worddoc.Content;
+            range.Find.ClearFormatting();
+            range.Find.Execute(FindText: subToReplace, ReplaceWith: text);
         }
     }
 }

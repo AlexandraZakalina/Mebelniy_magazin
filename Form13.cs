@@ -11,49 +11,28 @@ using System.Windows.Forms;
 
 namespace IS17ZakalinaKPR
 {
-    public partial class Form8 : Form
+    public partial class Form13 : Form
     {
         string connectionstring = @"Data Source=DESKTOP-HHT7APO;Integrated Security=SSPI;Initial Catalog=Mebelniy_magazin";
-        public Form8()
+        public Form13()
         {
             InitializeComponent();
         }
 
         private void button1_Click(object sender, EventArgs e)
         {
-            string query1 = "UPDATE Polzovatel SET ";
-            if(textBox2.Text != "")
-            {
-                query1 += "password ='"+textBox2.Text+"',";
-            }
-            if(Convert.ToString(comboBox1.SelectedValue) != "")
-            {
-                query1 += "doljnost = '"+Convert.ToString(comboBox1.SelectedValue)+"',";
-            }
-            if(textBox3.Text != "")
-            {
-                query1 += "familiya = '"+textBox3.Text+"',";
-            }
-		if(textBox4.Text != "")
-            {
-                query1 += "imya = '"+textBox4.Text+"',";
-            }
-		if(textBox5.Text != "")
-            {
-                query1 += "otchestvo = '"+textBox5.Text+"',";
-            }
-            string query11 = "";
-            for(int i=0;i<query1.Length-1;i++)
-            {
-                query11 += query1[i];
-            }
-            query11+= " WHERE login ='"+textBox1.Text+"'";
+            string query1 = "INSERT INTO Polzovatel (login, password, familiya, imya, otchestvo, doljnost) VALUES ('"+textBox1.Text+"','"+textBox2.Text+"','"+textBox3.Text+"','"+textBox4.Text+"','"+textBox5.Text+"','"+comboBox1.SelectedValue+"')";
             SqlConnection conn = new SqlConnection(connectionstring);
             conn.Open();
-            SqlCommand command1 = new SqlCommand(query11,conn);
-            command1.ExecuteNonQuery();
-            MessageBox.Show("Пользователь изменен!");
+            SqlCommand command = new SqlCommand(query1, conn);
+            command.ExecuteNonQuery();
             conn.Close();
+            MessageBox.Show("Пользователь добавлен!");
+            load(connectionstring, dataGridView1, "SELECT * FROM Polzovatel");
+        }
+
+        private void Form13_Load(object sender, EventArgs e)
+        {
             load(connectionstring, dataGridView1, "SELECT * FROM Polzovatel");
         }
         public void load(string connectionstring, DataGridView dataGrid, string query)
@@ -66,8 +45,15 @@ namespace IS17ZakalinaKPR
             dataGrid.DataSource = table;
         }
 
-        private void Form8_Load(object sender, EventArgs e)
+        private void button2_Click(object sender, EventArgs e)
         {
+            string query1 = "DELETE FROM Polzovatel WHERE login='"+textBox10.Text+"'";
+            SqlConnection conn = new SqlConnection(connectionstring);
+            conn.Open();
+            SqlCommand command = new SqlCommand(query1, conn);
+            command.ExecuteNonQuery();
+            conn.Close();
+            MessageBox.Show("Пользователь удален!");
             load(connectionstring, dataGridView1, "SELECT * FROM Polzovatel");
         }
     }
